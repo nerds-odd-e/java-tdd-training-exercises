@@ -1,9 +1,13 @@
 package bleep;
 
-public class MockClipboard implements Clipboard {
+public class MockClipboard implements Clipboard{
 
 	private String copiedText;
 
+	/* (non-Javadoc)
+	 * @see bleep.Clipboard#paste()
+	 */
+	@Override
 	public String paste() {
 		if (copiedText == null) {
 			return "";
@@ -11,8 +15,11 @@ public class MockClipboard implements Clipboard {
 		return copiedText;
 	}
 
+	/* (non-Javadoc)
+	 * @see bleep.Clipboard#copy(java.lang.String)
+	 */
+	@Override
 	public void copy(String copiedText) {
-		//os.clipboard.copy()
 		this.copiedText = copiedText;
 	}
 

@@ -1,12 +1,14 @@
 package com.game2048;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Game2048 extends JPanel {
   private static final Color BG_COLOR = new Color(0xbbada0);
@@ -18,6 +20,7 @@ public class Game2048 extends JPanel {
   boolean myWin = false;
   boolean myLose = false;
   int myScore = 0;
+private String mode;
 
   public Game2048() {
     setFocusable(true);
@@ -256,29 +259,62 @@ public class Game2048 extends JPanel {
   }
 
   private void drawTile(Graphics g2, Tile tile, int x, int y) {
-    Graphics2D g = ((Graphics2D) g2);
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+    Graphics2D g = initDrawTileGraphic(g2);
+
     int value = tile.value;
     int xOffset = offsetCoors(x);
     int yOffset = offsetCoors(y);
-    g.setColor(tile.getBackground());
-    g.fillRoundRect(xOffset, yOffset, TILE_SIZE, TILE_SIZE, 14, 14);
-    g.setColor(tile.getForeground());
-    final int size = value < 100 ? 36 : value < 1000 ? 32 : 24;
+    
+   drawTileRectange(tile, g, xOffset, yOffset);
+    
+    drawTileValue(g, value, xOffset, yOffset);
+
+    drawGameState(g);
+
+  }
+
+  public void drawTileValue(Graphics2D g, int value, int xOffset, int yOffset) {
+	final int size = value < 100 ? 36 : value < 1000 ? 32 : 24;
     final Font font = new Font(FONT_NAME, Font.BOLD, size);
     g.setFont(font);
+    
+    String s="";
+    if (mode=="azMode"){
+    	s=GetCharacterToDraw(value);
+    }
+    else{
+    	s = String.valueOf(value);
+    }
 
-    String s = String.valueOf(value);
-    final FontMetrics fm = getFontMetrics(font);
-
-    final int w = fm.stringWidth(s);
-    final int h = -(int) fm.getLineMetrics(s, g).getBaselineOffsets()[2];
+    final int w = getStringWidth(s, font);
+    final int h = getStringHeight(g, s, font);
 
     if (value != 0)
       g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
+}
+  
+  public int getStringWidth(String s,Font font){
+	 return getFontMetrics(font).stringWidth(s);
+  }
+  public int getStringHeight(Graphics2D g, String s,Font font){
+	  return  -(int)  getFontMetrics(font).getLineMetrics(s, g).getBaselineOffsets()[2];
+  }
 
-    if (myWin || myLose) {
+private void drawTileRectange(Tile tile, Graphics2D g, int xOffset, int yOffset) {
+	g.setColor(tile.getBackground());
+    g.fillRoundRect(xOffset, yOffset, TILE_SIZE, TILE_SIZE, 14, 14);
+    g.setColor(tile.getForeground());
+}
+
+private Graphics2D initDrawTileGraphic(Graphics g2) {
+	Graphics2D g = ((Graphics2D) g2);
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+	return g;
+}
+
+private void drawGameState(Graphics2D g) {
+	if (myWin || myLose) {
       g.setColor(new Color(255, 255, 255, 30));
       g.fillRect(0, 0, getWidth(), getHeight());
       g.setColor(new Color(78, 139, 202));
@@ -298,8 +334,7 @@ public class Game2048 extends JPanel {
     }
     g.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
     g.drawString("Score: " + myScore, 200, 365);
-
-  }
+}
 
   private static int offsetCoors(int arg) {
     return arg * (TILES_MARGIN + TILE_SIZE) + TILES_MARGIN;
@@ -343,15 +378,61 @@ public class Game2048 extends JPanel {
   }
 
   public static void main(String[] args) {
+
+
+	System.out.print("Select mode:");
+	Scanner scanIn = new Scanner(System.in);
+	int mode = scanIn.nextInt();
+	
     JFrame game = new JFrame();
     game.setTitle("2048 Game");
     game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     game.setSize(340, 400);
     game.setResizable(false);
 
-    game.add(new Game2048());
+    Game2048 game2048 = new Game2048();
+    game2048.setMode(mode==1?"normal":"azMode");
+    game.add(game2048);
 
     game.setLocationRelativeTo(null);
     game.setVisible(true);
   }
+
+	public void setMode(String mode) {
+		this.mode = mode;
+		
+	}
+
+	public String getMode() {
+		// TODO Auto-generated method stub
+		return this.mode;
+	}
+
+	public String GetCharacterToDraw(int i) {
+		if (i == 2)
+			return "A";
+		if (i == 4)
+			return "B";
+		if (i == 8) 
+			return "C";
+		if (i == 16) 
+			return "D";
+		if (i == 32) 
+			return "E";
+		if (i == 64) 
+			return "F";
+		if (i == 128) 
+			return "G";
+		if (i == 256) 
+			return "H";
+		if (i == 512) 
+			return "I";
+		if (i == 1024) 
+			return "J";
+		if (i == 2048) 
+			return "K";
+		else 
+			return i+"";
+	}
+	
 }
