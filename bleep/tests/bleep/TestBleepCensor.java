@@ -8,13 +8,14 @@ public class TestBleepCensor {
 
 
 	Clipboard clipboard = new MockClipboard();
-	Censor bleep = new Censor(clipboard);
+	SentenceManipulation bleeper = new SentenceManipulation();
+	Censor censor = new Censor(clipboard, bleeper);
 	
 	@Test
 	public void frankShouldReturnCensoredWord() {
 		clipboard.copy("Frank");
-		bleep.setCensoredText("frAnk");
-		bleep.censor();
+		bleeper.setCensoredText("frAnk");
+		censor.censor();
 		assertEquals("F***k", clipboard.paste());
 	}
 	
@@ -30,8 +31,8 @@ public class TestBleepCensor {
 
 	private String censorClipboard(String contents, String censoredText) {
 		clipboard.copy(contents);
-		bleep.setCensoredText(censoredText);
-		bleep.censor();
+		bleeper.setCensoredText(censoredText);
+		censor.censor();
 		String paste = clipboard.paste();
 		return paste;
 	}
@@ -39,24 +40,24 @@ public class TestBleepCensor {
 	@Test
 	public void quotedFrankShouldReturnQuoteF___k() {
 		clipboard.copy("\"Frank");
-		bleep.setCensoredText("frAnk");
-		bleep.censor();
+		bleeper.setCensoredText("frAnk");
+		censor.censor();
 		assertEquals("\"F***k", clipboard.paste());
 	}
 
 	@Test
 	public void quotlklmkkledFrankShouldReturnQuoteF___k() {
 		clipboard.copy("Frank\"");
-		bleep.setCensoredText("frAnk");
-		bleep.censor();
+		bleeper.setCensoredText("frAnk");
+		censor.censor();
 		assertEquals("F***k\"", clipboard.paste());
 	}
 	
 	//@Test
-	public void brilliantJobShouldBeCensored() {
-		clipboard.copy("brilliant job");
-		bleep.setCensoredText("brilliant job");
-		bleep.censor();
-		assertEquals("b******* **b", clipboard.paste());
+	public void brilliantNewLineJobShouldBeCensored() {
+		clipboard.copy("brilliant \njob");
+		bleeper.setCensoredText("brilliant \njob");
+		censor.censor();
+		assertEquals("b******* \n**b", clipboard.paste());
 	}	
 }

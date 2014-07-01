@@ -1,12 +1,15 @@
 package com.game2048;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Game2048 extends JPanel {
   private static final Color BG_COLOR = new Color(0xbbada0);
@@ -18,8 +21,19 @@ public class Game2048 extends JPanel {
   boolean myWin = false;
   boolean myLose = false;
   int myScore = 0;
+  
+  private boolean alphaMode = true;
 
+  public Game2048(boolean alphaMode) {
+	  this.alphaMode = alphaMode;
+	  init();
+  }
+  
   public Game2048() {
+	  init();
+  }
+  
+  private void init() {
     setFocusable(true);
     addKeyListener(new KeyAdapter() {
       @Override
@@ -104,7 +118,7 @@ public class Game2048 extends JPanel {
     myTiles = rotate(270);
   }
 
-  private Tile tileAt(int x, int y) {
+   Tile tileAt(int x, int y) {
     return myTiles[x + y * 4];
   }
 
@@ -255,7 +269,7 @@ public class Game2048 extends JPanel {
     }
   }
 
-  private void drawTile(Graphics g2, Tile tile, int x, int y) {
+  protected void drawTile(Graphics g2, Tile tile, int x, int y) {
     Graphics2D g = ((Graphics2D) g2);
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
@@ -269,7 +283,8 @@ public class Game2048 extends JPanel {
     final Font font = new Font(FONT_NAME, Font.BOLD, size);
     g.setFont(font);
 
-    String s = String.valueOf(value);
+    String s = getDisplayString(value);
+    
     final FontMetrics fm = getFontMetrics(font);
 
     final int w = fm.stringWidth(s);
@@ -301,13 +316,24 @@ public class Game2048 extends JPanel {
 
   }
 
+String getDisplayString(int value) {
+	String s;
+	if (alphaMode) {	
+		NumberToAlpha numberToAlpha = new NumberToAlpha();
+	    s = "" + numberToAlpha.getMapNumberToAlpha(value);
+	} else {
+		s = "" + value;
+	}
+	return s;
+}
+
   private static int offsetCoors(int arg) {
     return arg * (TILES_MARGIN + TILE_SIZE) + TILES_MARGIN;
   }
 
   static class Tile {
     int value;
-
+    
     public Tile() {
       this(0);
     }
@@ -315,7 +341,7 @@ public class Game2048 extends JPanel {
     public Tile(int num) {
       value = num;
     }
-
+    
     public boolean isEmpty() {
       return value == 0;
     }

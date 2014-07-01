@@ -4,18 +4,14 @@ package bleep;
 public class Censor {
 
 	private Clipboard clipboard;
-	Bleeper bleeper = new Bleeper();
+	private SentenceManipulation bleeper;
 
-	public Censor(Clipboard clipboard) {
+	public Censor(Clipboard clipboard, SentenceManipulation bleeper) {
 		this.clipboard = clipboard;
+		this.bleeper = bleeper;
 	}
 
 	public void censor() {
-
-		clipboard.copy(bleeper.censor(this, clipboard.paste()));
-	}
-
-	public void setCensoredText(String censoredText) {
-		this.censoredText = censoredText;
+		clipboard.copy(bleeper.censor(clipboard.paste()));
 	}
 }
