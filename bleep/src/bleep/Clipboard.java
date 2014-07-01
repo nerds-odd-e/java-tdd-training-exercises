@@ -2,7 +2,7 @@ package bleep;
 
 public interface Clipboard {
 	
-	String paste();
+	String getContent();
 	
 	void copy(String contents);
 

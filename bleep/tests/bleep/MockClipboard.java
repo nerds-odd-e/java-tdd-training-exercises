@@ -5,7 +5,7 @@ public class MockClipboard implements Clipboard {
 	private String contents;
 
 	@Override
-	public String paste() {
+	public String getContent() {
 		return contents;
 	}
 

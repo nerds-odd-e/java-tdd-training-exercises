@@ -1,6 +1,7 @@
 package com.game2048;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -14,10 +15,11 @@ public class Game2048 extends JPanel {
   private static final int TILE_SIZE = 64;
   private static final int TILES_MARGIN = 16;
 
-  private Tile[] myTiles;
+  protected Tile[] myTiles;
   boolean myWin = false;
   boolean myLose = false;
   int myScore = 0;
+  private boolean azMode = true;
 
   public Game2048() {
     setFocusable(true);
@@ -255,7 +257,7 @@ public class Game2048 extends JPanel {
     }
   }
 
-  private void drawTile(Graphics g2, Tile tile, int x, int y) {
+  public void drawTile(Graphics g2, Tile tile, int x, int y) {
     Graphics2D g = ((Graphics2D) g2);
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
@@ -268,15 +270,19 @@ public class Game2048 extends JPanel {
     final int size = value < 100 ? 36 : value < 1000 ? 32 : 24;
     final Font font = new Font(FONT_NAME, Font.BOLD, size);
     g.setFont(font);
+    String  s = String.valueOf(value);
+    if(azMode)
+    {
+    	s = tile.getAZFaceValue(); 
+    }
 
-    String s = String.valueOf(value);
     final FontMetrics fm = getFontMetrics(font);
 
     final int w = fm.stringWidth(s);
-    final int h = -(int) fm.getLineMetrics(s, g).getBaselineOffsets()[2];
+    final int h = getLineHeight(g, s, fm);
 
     if (value != 0)
-      g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
+		drawTileFace(g, xOffset, yOffset, s, w, h);
 
     if (myWin || myLose) {
       g.setColor(new Color(255, 255, 255, 30));
@@ -301,18 +307,45 @@ public class Game2048 extends JPanel {
 
   }
 
+protected int getLineHeight(Graphics2D g, String s, final FontMetrics fm) {
+	final int h = -(int) fm.getLineMetrics(s, g).getBaselineOffsets()[2];
+	return h;
+}
+
+protected void drawTileFace(Graphics2D g, int xOffset, int yOffset, String s,
+		final int w, final int h) {
+	g.drawString(s, xOffset + (TILE_SIZE - w) / 2, yOffset + TILE_SIZE - (TILE_SIZE - h) / 2 - 2);
+}
+
   private static int offsetCoors(int arg) {
     return arg * (TILES_MARGIN + TILE_SIZE) + TILES_MARGIN;
   }
 
-  static class Tile {
+  static public class Tile {
     int value;
 
     public Tile() {
       this(0);
     }
 
-    public Tile(int num) {
+    public String getAZFaceValue() {
+    	switch (value) {
+        case 2:    return "A";
+        case 4:    return "B";
+        case 8:    return "C";
+        case 16:   return "D";
+        case 32:   return "E";
+        case 64:   return "F";
+        case 128:  return "G";
+        case 256:  return "H";
+        case 512:  return "I";
+        case 1024: return "J";
+        case 2048: return "K";
+        default: return "Z";
+        }
+	}
+
+	public Tile(int num) {
       value = num;
     }
 
@@ -341,6 +374,15 @@ public class Game2048 extends JPanel {
       return new Color(0xcdc1b4);
     }
   }
+  
+  public void setAZMode(){
+	  azMode = true;
+  }
+  
+  public void setNumberMode(){
+	  azMode = false;
+  }
+  
 
   public static void main(String[] args) {
     JFrame game = new JFrame();
