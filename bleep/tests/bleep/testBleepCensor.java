@@ -6,9 +6,120 @@ import org.junit.Test;
 
 public class testBleepCensor {
 
+	Clipboard clipboard = new MockClipboard();
+	BleepCensor bleep = new BleepCensor(clipboard);
+	
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void frankShouldBeCensored(){
+		clipboard.copy("frank");
+		bleep.censor("frank");	
+		assertEquals("f***k", clipboard.paste());
 	}
 
+	@Test
+	public void franklyGivesSameWord() {
+		clipboard.copy("frankly");
+		bleep.censor("frank");
+		assertEquals("frankly", clipboard.paste());
+	}
+
+	@Test
+	public void nonFrankinSentenceShouldNotBeCensored() {
+		clipboard.copy("Fk ford");
+		bleep.censor("frank");
+		assertEquals("Fk ford", clipboard.paste());
+	}
+	
+	@Test
+	public void frankinSentenceShouldBeCensored() {
+		clipboard.copy("Frank ford");
+		bleep.censor("frank");
+		assertEquals("F***k ford", clipboard.paste());
+	}
+	
+	@Test
+	public void frankInQuotesShouldBeCensored() {
+		clipboard.copy("\"Frank\"");
+		bleep.censor("frank");
+		assertEquals("\"F***k\"", clipboard.paste());
+	}
+	
+	@Test
+	public void frankInSingleQuotesShouldBeCensored() {
+		clipboard.copy("'Frank'");
+		bleep.censor("frank");
+		assertEquals("'F***k'", clipboard.paste());
+	}
+	
+
+	@Test
+	public void frankAsLastWordShouldBeCensored() {
+		clipboard.copy("Hello Frank");
+		bleep.censor("frank");
+		assertEquals("Hello F***k", clipboard.paste());
+	}
+
+	@Test
+	public void fRAnkShouldBeCensored() {
+		clipboard.copy("fRAnk");
+		bleep.censor("frank");
+		assertEquals("f***k", clipboard.paste());
+	}
+	
+	@Test
+	public void birdShouldBeCensored() {
+		clipboard.copy("bird");
+		bleep.censor("bird");
+		assertEquals("b**d", clipboard.paste());
+	}
+	
+	@Test
+	public void airdShouldBeNotCensored() {
+		clipboard.copy("aird");
+		bleep.censor("bird");
+		assertEquals("aird", clipboard.paste());
+	}
+	
+	@Test
+	public void simiColonSeparatorShouldBeCensored() {
+		clipboard.copy("bird;bird");
+		bleep.censor("bird");
+		assertEquals("b**d;b**d", clipboard.paste());
+	}
+	
+	@Test
+	public void simiColonAndSpaceSeparatorShouldBeCensored() {
+		clipboard.copy("bird;bird bird");
+		bleep.censor("bird");
+		assertEquals("b**d;b**d b**d", clipboard.paste());
+	}
+	
+	@Test
+	public void multiSimiColonAndSpaceSeparatorShouldBeCensored() {
+		clipboard.copy("bird;;bird _bird");
+		bleep.censor("bird");
+		assertEquals("b**d;;b**d _b**d", clipboard.paste());
+	}
+	
+	@Test
+	public void fullStopSeparatorShouldBeCensored() {
+		clipboard.copy("bird;;bird _bird.bird");
+		bleep.censor("bird");
+		assertEquals("b**d;;b**d _b**d.b**d", clipboard.paste());
+	}
+	
+	@Test
+	public void semiColonAtEndSeparatorShouldNotBeCensored() {
+		clipboard.copy("dog;");
+		bleep.censor("bird");
+		assertEquals("dog;", clipboard.paste());
+	}
+	
+	@Test
+	public void semiColonAtBeginSeparatorShouldBeCensored() {
+		clipboard.copy(";dog");
+		bleep.censor("dog");
+		assertEquals(";d*g", clipboard.paste());
+	}
 }
+
