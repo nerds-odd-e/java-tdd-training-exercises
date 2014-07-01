@@ -21,7 +21,35 @@ public class FizzBuzzTest {
 
 	@Test
 	public void test() {
-		assertEquals(1, 2);
+		assertEquals(1, 1);
 	}
-
+	
+	@Test
+	public void testThree()
+	{
+		FizzBuzz fizzBuzz = new FizzBuzz();
+		assertEquals(fizzBuzz.check(3),"Fizz");
+	}
+	
+	@Test
+	public void testFive() {
+		FizzBuzz fizzBuzz = new FizzBuzz();
+		assertEquals(fizzBuzz.check(5), "Buzz");
+	}
+	
+	@Test
+	public void oneShouldReturnOne() {
+		FizzBuzz fizzBuzz = new FizzBuzz();
+		assertEquals(fizzBuzz.check(1), "1");
+	}
+	
+	public void timesOfThreeReturnFizz(){
+		FizzBuzz fizzBuzz = new FizzBuzz();
+		
+		assertEquals(fizzBuzz.check(timesThreegenertor()), "Fizz");
+	}
+	
+   private int timesThreegenertor(){
+	   return 15;
+   }
 }
