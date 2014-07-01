@@ -1,19 +1,41 @@
 package com.game2048;
 
 import javax.swing.*;
+
+import com.game2048.TileData;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Game2048 extends JPanel {
   private static final Color BG_COLOR = new Color(0xbbada0);
   private static final String FONT_NAME = "Arial";
   private static final int TILE_SIZE = 64;
   private static final int TILES_MARGIN = 16;
-
+  private static final Map mapping = new HashMap();
+  
+static {
+	mapping.put("0","");
+	  mapping.put("2","A");
+	  mapping.put("4","B");
+	  mapping.put("8","C");
+	  mapping.put("16","D");
+	  mapping.put("32","E");
+	  mapping.put("64","F");
+	  mapping.put("128","G");
+	  mapping.put("256","H");
+	  mapping.put("512","I");
+	  mapping.put("1024","J");
+	  mapping.put("2048","K");
+	  
+  }
+  
   private Tile[] myTiles;
   boolean myWin = false;
   boolean myLose = false;
@@ -104,7 +126,7 @@ public class Game2048 extends JPanel {
     myTiles = rotate(270);
   }
 
-  private Tile tileAt(int x, int y) {
+  public Tile tileAt(int x, int y) {
     return myTiles[x + y * 4];
   }
 
@@ -113,7 +135,7 @@ public class Game2048 extends JPanel {
     if (!availableSpace().isEmpty()) {
       int index = (int) (Math.random() * list.size()) % list.size();
       Tile emptyTime = list.get(index);
-      emptyTime.value = Math.random() < 0.9 ? 2 : 4;
+      emptyTime.data.value = Math.random() < 0.9 ? 2 : 4;
     }
   }
 
@@ -138,8 +160,8 @@ public class Game2048 extends JPanel {
     for (int x = 0; x < 4; x++) {
       for (int y = 0; y < 4; y++) {
         Tile t = tileAt(x, y);
-        if ((x < 3 && t.value == tileAt(x + 1, y).value)
-          || ((y < 3) && t.value == tileAt(x, y + 1).value)) {
+        if ((x < 3 && t.data.value == tileAt(x + 1, y).data.value)
+          || ((y < 3) && t.data.value == tileAt(x, y + 1).data.value)) {
           return true;
         }
       }
@@ -155,7 +177,7 @@ public class Game2048 extends JPanel {
     }
 
     for (int i = 0; i < line1.length; i++) {
-      if (line1[i].value != line2[i].value) {
+      if (line1[i].data.value != line2[i].data.value) {
         return false;
       }
     }
@@ -205,8 +227,8 @@ public class Game2048 extends JPanel {
   private Tile[] mergeLine(Tile[] oldLine) {
     LinkedList<Tile> list = new LinkedList<Tile>();
     for (int i = 0; i < 4 && !oldLine[i].isEmpty(); i++) {
-      int num = oldLine[i].value;
-      if (i < 3 && oldLine[i].value == oldLine[i + 1].value) {
+      int num = oldLine[i].data.value;
+      if (i < 3 && oldLine[i].data.value == oldLine[i + 1].data.value) {
         num *= 2;
         myScore += num;
         int ourTarget = 2048;
@@ -225,7 +247,7 @@ public class Game2048 extends JPanel {
     }
   }
 
-  private static void ensureSize(java.util.List<Tile> l, int s) {
+  private  void ensureSize(java.util.List<Tile> l, int s) {
     while (l.size() != s) {
       l.add(new Tile());
     }
@@ -255,11 +277,17 @@ public class Game2048 extends JPanel {
     }
   }
 
-  private void drawTile(Graphics g2, Tile tile, int x, int y) {
+  
+  public String getMappedChar(int value){
+	 
+	return (String) mapping.get(""+value);
+  }
+  
+  public void drawTile(Graphics g2, Tile tile, int x, int y) {
     Graphics2D g = ((Graphics2D) g2);
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-    int value = tile.value;
+    int value = tile.data.value;
     int xOffset = offsetCoors(x);
     int yOffset = offsetCoors(y);
     g.setColor(tile.getBackground());
@@ -268,8 +296,8 @@ public class Game2048 extends JPanel {
     final int size = value < 100 ? 36 : value < 1000 ? 32 : 24;
     final Font font = new Font(FONT_NAME, Font.BOLD, size);
     g.setFont(font);
-
-    String s = String.valueOf(value);
+    
+    String s = getMappedChar(value);
     final FontMetrics fm = getFontMetrics(font);
 
     final int w = fm.stringWidth(s);
@@ -305,42 +333,7 @@ public class Game2048 extends JPanel {
     return arg * (TILES_MARGIN + TILE_SIZE) + TILES_MARGIN;
   }
 
-  static class Tile {
-    int value;
 
-    public Tile() {
-      this(0);
-    }
-
-    public Tile(int num) {
-      value = num;
-    }
-
-    public boolean isEmpty() {
-      return value == 0;
-    }
-
-    public Color getForeground() {
-      return value < 16 ? new Color(0x776e65) :  new Color(0xf9f6f2);
-    }
-
-    public Color getBackground() {
-      switch (value) {
-        case 2:    return new Color(0xeee4da);
-        case 4:    return new Color(0xede0c8);
-        case 8:    return new Color(0xf2b179);
-        case 16:   return new Color(0xf59563);
-        case 32:   return new Color(0xf67c5f);
-        case 64:   return new Color(0xf65e3b);
-        case 128:  return new Color(0xedcf72);
-        case 256:  return new Color(0xedcc61);
-        case 512:  return new Color(0xedc850);
-        case 1024: return new Color(0xedc53f);
-        case 2048: return new Color(0xedc22e);
-      }
-      return new Color(0xcdc1b4);
-    }
-  }
 
   public static void main(String[] args) {
     JFrame game = new JFrame();

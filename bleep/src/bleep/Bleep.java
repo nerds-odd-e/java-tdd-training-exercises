@@ -2,8 +2,26 @@ package bleep;
 
 
 public class Bleep {
+	
+	
+	public static void main(String[] args){
+		
+		Bleep b = new Bleep();
+		
+		
+		while(true){
+			try {
+				Thread.sleep(1000);
+				
+				b.filter("test");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	OSClipboard osClipboard = new OSClipboard();
-	public Censor cen = new Censor();
 	
 	private String split_token = " ";
 
@@ -19,7 +37,8 @@ public class Bleep {
 		
 		boolean isFirst = true;
 		for (String src : arrayString) {
-			String result = cen.censor(stringToCensor, src);
+			String result = new StringBleeper(stringToCensor, src).censor();
+			
 			if (!isFirst) {
 				stBuff.append(split_token);
 			}

@@ -50,4 +50,13 @@ public class testBleepCensor {
 		assertEquals("\"f***k\" is not F***k and that f***K,", osClipboard.GetFromClipboard());
 	}
 	
+	@Test
+	public void testSplitWithSpace() {
+		
+		String rawStr = ("\"frank\" is not Frank and that fRanK,");
+		String[] strs = new String[]{"\"frank\"","is","not", "Frank", "and", "that", "fRanK,"};
+		
+		String[] rs = bleep.splitInput(rawStr);
+		assertEquals(strs.length,rs.length);
+	}
 }
