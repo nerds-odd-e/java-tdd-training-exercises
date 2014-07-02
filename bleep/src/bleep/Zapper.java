@@ -1,24 +1,18 @@
 package bleep;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Zapper {
-	public ForbiddenWord forbiddenWord = new ForbiddenWord();
-	Pattern pattern = Pattern.compile("\\w+");
+	private List<ForbiddenWord> forbiddenWordList = new ArrayList<ForbiddenWord>();
 
 	String zap(String content) {
-		StringBuffer sb = new StringBuffer(content);
-		Matcher matcher = pattern.matcher(content);
-		while (matcher.find()) {
-			sb.replace(matcher.start(), matcher.end(),
-					forbiddenWord.censor(matcher.group()));
-		}
-
-		return sb.toString();
+		for (ForbiddenWord forbiddenWord : forbiddenWordList) 
+			content = forbiddenWord.replaceForbiddenWord(content);
+		return content;
 	}
 
-	void setForbiddenWord(String forbiddenWord) {
-		this.forbiddenWord = new ForbiddenWord(forbiddenWord);
+	void addForbiddenWord(String forbiddenWord) {
+		forbiddenWordList.add(new ForbiddenWord(forbiddenWord));
 	}
 }

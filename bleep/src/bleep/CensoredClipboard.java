@@ -1,20 +1,35 @@
 package bleep;
 
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+
 public class CensoredClipboard {
-	private String content;
 	private Zapper zapper = new Zapper();
+	private ClipboardWrapper clipboard;
 
-	public void copy(String content) {
-		this.content = zapper.zap(content);
+	public CensoredClipboard(String[] badWords, ClipboardWrapper clipboard) {
+		for(String word : badWords)
+			zapper.addForbiddenWord(word);
+		this.clipboard = clipboard;
 	}
 
-	public Object paste() {
-		return this.content;
+	public void censor() {
+		try {
+			clipboard.copy(zapper.zap(clipboard.paste()));
+		} catch (UnsupportedFlavorException e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void setForbiddenWord(String forbiddenWord) {
-		zapper.setForbiddenWord(forbiddenWord);
-		
+	public void serve() throws InterruptedException {
+		while (true) {
+			censor();
+			sleep();
+		}
 	}
 
+	public void sleep() throws InterruptedException {
+		Thread.sleep(1000);
+	}
 }
