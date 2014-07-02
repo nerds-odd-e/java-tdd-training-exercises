@@ -3,11 +3,11 @@ package bleep;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-public class CensoredClipboard {
+public class BleepCensorApplication {
 	private Zapper zapper = new Zapper();
 	private ClipboardWrapper clipboard;
 
-	public CensoredClipboard(String[] badWords, ClipboardWrapper clipboard) {
+	public BleepCensorApplication(String[] badWords, ClipboardWrapper clipboard) {
 		for(String word : badWords)
 			zapper.addForbiddenWord(word);
 		this.clipboard = clipboard;
@@ -29,7 +29,13 @@ public class CensoredClipboard {
 		}
 	}
 
-	public void sleep() throws InterruptedException {
+	protected void sleep() throws InterruptedException {
 		Thread.sleep(1000);
 	}
+	
+	public static void main(String[] args) throws InterruptedException {
+		if (args.length == 0)
+			args = new String[] {"bad"};
+		new BleepCensorApplication(args, new ClipboardWrapper()).serve();
+	}	
 }

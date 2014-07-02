@@ -1,29 +1,25 @@
 package bleep;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class ForbiddenWord {
+	
 	private String forbiddenWord;
-	Pattern pattern = Pattern.compile("\\w+");
 
-	public ForbiddenWord(String forbiddenWord2) {
-		forbiddenWord = forbiddenWord2;
+	public ForbiddenWord(String forbiddenWord) {
+		this.forbiddenWord = forbiddenWord;
 	}
 
-	protected String replaceForbiddenWord(String content) {
+	public String replace(String content) {
 		StringBuffer sb = new StringBuffer(content);
-		Matcher matcher = pattern.matcher(content);
-		while (matcher.find()) {
-			if (matcher.group().equals(forbiddenWord)) {
-				starize(sb, matcher.start());
-			}
-		}
+		WordBlockReader reader = new WordBlockReader(content);
+		while (reader.nextMatch(forbiddenWord))
+			starize(sb, reader.currentPosition());
 		return sb.toString();
 	}
 
 	protected void starize(StringBuffer sb, int start) {
-		for (int i = 1; i < forbiddenWord.length() - 1; i++)
-			sb.setCharAt(start + i, '*');
+		for (int i = start + 1; i < start + forbiddenWord.length() - 1; i++)
+			if (sb.charAt(i) != ' ' && sb.charAt(i) != '\n')
+				sb.setCharAt(i, '*');
 	}
+	
 }

@@ -8,7 +8,7 @@ public class Zapper {
 
 	String zap(String content) {
 		for (ForbiddenWord forbiddenWord : forbiddenWordList) 
-			content = forbiddenWord.replaceForbiddenWord(content);
+			content = forbiddenWord.replace(content);
 		return content;
 	}
 

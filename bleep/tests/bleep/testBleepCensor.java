@@ -10,7 +10,7 @@ import static org.mockito.Mockito.*;
 public class testBleepCensor {
 	ClipboardWrapper clipboard = mock(ClipboardWrapper.class);
 	String[] badWords = {"bad"};
-	CensoredClipboard app = new CensoredClipboard(badWords, clipboard);
+	BleepCensorApplication app = new BleepCensorApplication(badWords, clipboard);
 	
 	@Test
 	public void shouldNotChangeClipboardContentIfNoForbiddenWord() throws UnsupportedFlavorException, IOException {
@@ -36,7 +36,7 @@ public class testBleepCensor {
 	
 	@Test(expected = InterruptedException.class)
 	public void serviceShouldWatchTheClipboardUntilInterupted() throws UnsupportedFlavorException, IOException, InterruptedException {
-		CensoredClipboard app = new CensoredClipboard(badWords, clipboard){
+		BleepCensorApplication app = new BleepCensorApplication(badWords, clipboard){
 			int counter = 5;
 			@Override
 			public void sleep() throws InterruptedException {

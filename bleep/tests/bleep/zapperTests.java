@@ -50,4 +50,16 @@ public class zapperTests {
 		assertEquals("b*d c*t", zapper.zap("bad cat"));
 	}
 		
+
+	@Test
+	public void shouldCensorPhrase() throws Exception {
+		zapper.addForbiddenWord("cat bad");
+		assertEquals("c** **d", zapper.zap("cat bad"));
+	}
+	
+	@Test
+	public void shouldCensorPhraseWithNewLine() throws Exception {
+		zapper.addForbiddenWord("bad cat");
+		assertEquals("b**\n**t", zapper.zap("bad\ncat"));
+	}
 }
