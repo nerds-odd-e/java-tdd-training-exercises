@@ -1,15 +1,24 @@
 package bleep;
 
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WordBlockReader {
+public class WordBlockReader implements Iterable<Integer>, Iterator<Integer> {
+
+	@Override
+	public Iterator<Integer> iterator() {
+		return this;
+	}
+
 	public Pattern pattern = Pattern.compile("\\w+");
 	public String cached = "";
 	public int savedStart;
 	public Matcher matcher;
+	private String target;
 
-	public WordBlockReader(String content) {
+	public WordBlockReader(String content, String word) {
+		this.target = word;
 		matcher = pattern.matcher(content);
 	}
 
@@ -22,11 +31,11 @@ public class WordBlockReader {
 		} else {
 			cached += " " + matcher.group();
 		}
-	
+
 		return true;
 	}
 
-	protected boolean nextMatch(String word) {
+	public boolean nextMatch(String word) {
 		while (nextBlock()) {
 			if (!word.startsWith(cached))
 				cached = "";
@@ -38,7 +47,18 @@ public class WordBlockReader {
 		return false;
 	}
 
-	public int currentPosition() {
+	@Override
+	public boolean hasNext() {
+		return nextMatch(target);
+	}
+
+	@Override
+	public Integer next() {
 		return savedStart;
 	}
+
+	@Override
+	public void remove() {
+	}
+
 }

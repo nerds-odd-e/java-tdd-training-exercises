@@ -10,9 +10,8 @@ public class ForbiddenWord {
 
 	public String replace(String content) {
 		StringBuffer sb = new StringBuffer(content);
-		WordBlockReader reader = new WordBlockReader(content);
-		while (reader.nextMatch(forbiddenWord))
-			starize(sb, reader.currentPosition());
+		for(Integer pos : new WordBlockReader(content, forbiddenWord))
+			starize(sb, pos);
 		return sb.toString();
 	}
 
